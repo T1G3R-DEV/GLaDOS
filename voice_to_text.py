@@ -3,18 +3,20 @@ import json
 import pyaudio
 import time
 from vosk import Model, KaldiRecognizer
+import subprocess
 
 # ---- 1) SETUP ----
 
 # Load your Vosk model once (small model recommended for real-time use)
-model = Model("stt-models/vosk-model-small-en-us-0.15")
-
+print("Loading Voice Models...")
+modellight = Model("stt-models/vosk-model-small-en-us-0.15")
+modelheavy = Model("stt-models/vosk-model-en-us-0.22")
 # First recognizer: wake word detection mode
 wake_words = '["hello"]'  # your custom wake word
-rec_wake = KaldiRecognizer(model, 16000, wake_words)
+rec_wake = KaldiRecognizer(modellight, 16000, wake_words)
 
 # Later we'll switch to full recognizer (free vocabulary)
-rec_stt = KaldiRecognizer(model, 16000)
+rec_stt = KaldiRecognizer(modelheavy, 16000)
 
 # Setup microphone stream
 p = pyaudio.PyAudio()
@@ -40,6 +42,8 @@ while True:
             if "hello" in text:
                 print("\n🚀 Wake word detected! Switching to full STT mode...")
                 break
+
+
 
     # ---- 3) STT MODE ----
     print("🎙️  Speak now... (Ctrl+C to exit)")
